@@ -1,8 +1,11 @@
----
+# permissions for end users to edit liberries.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: manager-role
+  labels:
+    app.kubernetes.io/name: liberry
+    app.kubernetes.io/managed-by: kustomize
+  name: liberry-editor-role
 rules:
 - apiGroups:
   - webapp.my.domain
@@ -19,14 +22,6 @@ rules:
 - apiGroups:
   - webapp.my.domain
   resources:
-  - liberries/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - webapp.my.domain
-  resources:
   - liberries/status
   verbs:
   - get
-  - patch
-  - update
