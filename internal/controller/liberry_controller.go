@@ -25,6 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	webappv1 "github.com/SaphMB/liberry/api/v1"
+	"github.com/go-logr/logr"
 )
 
 // LiberryReconciler reconciles a Liberry object
@@ -32,6 +33,8 @@ type LiberryReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
+
+var logger logr.Logger
 
 // +kubebuilder:rbac:groups=webapp.my.domain,resources=liberries,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=webapp.my.domain,resources=liberries/status,verbs=get;update;patch
@@ -47,9 +50,19 @@ type LiberryReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.0/pkg/reconcile
 func (r *LiberryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger = log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	var liberry webappv1.Liberry
+
+	if err := r.Get(ctx, req.NamespacedName, &liberry); err != nil {
+		logger.Error(err, "unable to fetch Liberry")
+		// we'll ignore not-found errors, since they can't be fixed by an immediate
+		// requeue (we'll need to wait for a new notification), and we can get them
+		// on deleted requests.
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	logger.Info("Found Liberry", "name", liberry.Name)
 
 	return ctrl.Result{}, nil
 }

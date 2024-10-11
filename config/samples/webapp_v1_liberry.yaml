@@ -4,6 +4,6 @@ metadata:
   labels:
     app.kubernetes.io/name: liberry
     app.kubernetes.io/managed-by: kustomize
-  name: liberry-sample
+  name: liberry-new
 spec:
-  category: "reference"
+  # category: "reference"
